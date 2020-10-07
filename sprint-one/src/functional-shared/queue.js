@@ -5,7 +5,7 @@ var Queue = function() {
     storage: {},
     counter: 0,
     start: 0
-  }
+  };
 
   _.extend(someInstances, queueMethods);
   return someInstances;
