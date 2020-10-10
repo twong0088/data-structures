@@ -3,6 +3,7 @@
 var HashTable = function() {
   this._limit = 8;
   this._storage = LimitedArray(this._limit);
+  this._size = 0;
 
 };
 
@@ -26,8 +27,8 @@ HashTable.prototype.insert = function(key, value) {
   if (repeat === false) {
     var tuple = [key, value];
     bucket.push(tuple);
+    this.size++;
   }
-
 };
 
 HashTable.prototype.retrieve = function(key) {
@@ -50,6 +51,7 @@ HashTable.prototype.remove = function(key) {
   bucket.forEach(function(tuple, i) {
     if (tuple[0] === key) {
       bucket.splice(i, 1);
+      this.size--;
     }
   });
 };
