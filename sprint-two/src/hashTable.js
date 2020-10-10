@@ -27,7 +27,10 @@ HashTable.prototype.insert = function(key, value) {
   if (repeat === false) {
     var tuple = [key, value];
     bucket.push(tuple);
-    this.size++;
+    this._size++;
+    if (this._size > 0.75 * this._limit) {
+      this.resize(this._limit * 2);
+    }
   }
 };
 
@@ -35,11 +38,13 @@ HashTable.prototype.retrieve = function(key) {
   var index = getIndexBelowMaxForKey(key, this._limit);
   var bucket = this._storage.get(index);
   var result = undefined;
-  bucket.forEach(function(tuple) {
-    if (tuple[0] === key) {
-      result = tuple[1];
-    }
-  });
+  if (bucket) {
+    bucket.forEach(function(tuple) {
+      if (tuple[0] === key) {
+        result = tuple[1];
+      }
+    });
+  }
   return result;
 
 };
@@ -48,10 +53,32 @@ HashTable.prototype.remove = function(key) {
   var index = getIndexBelowMaxForKey(key, this._limit);
   var bucket = this._storage.get(index);
 
-  bucket.forEach(function(tuple, i) {
-    if (tuple[0] === key) {
-      bucket.splice(i, 1);
-      this.size--;
+  if (bucket) {
+    for (var i = 0; i < bucket.length; i++) {
+      var tuple = bucket[i];
+      if (tuple[0] === key) {
+        bucket.splice(i, 1);
+        this._size--;
+        if (this._size < this._limit * 0.25) {
+          this.resize(this._limit / 2);
+        }
+      }
+    }
+  }
+};
+
+HashTable.prototype.resize = function(newSize) {
+  var oldStorage = this._storage;
+  this._limit = newSize;
+  this._storage = LimitedArray(newSize);
+  this._size = 0;
+  var context = this;
+  oldStorage.each(function(bucket) {
+    if (bucket) {
+      for (var i = 0; i < bucket.length; i++) {
+        var tuple = bucket[i];
+        context.insert(tuple[0], tuple[1]);
+      }
     }
   });
 };
