@@ -52,4 +52,40 @@ describe('linkedList', function() {
   });
 
   // add more tests here to test the functionality of linkedList
+  it('should properly point to the previous node', function() {
+    linkedList.addToTail(4);
+    linkedList.addToTail(5);
+    expect(linkedList.tail.previous.value).to.equal(4);
+  });
+
+  it('should update previous property of new head to null after removeHead is called', function() {
+    linkedList.addToTail(4);
+    linkedList.addToTail(5);
+    linkedList.removeHead();
+    expect(linkedList.head.previous).to.equal(null);
+  });
+
+  it('should update previous property of new head to null after removeHead is called', function() {
+    linkedList.addToTail(4);
+    linkedList.addToTail(5);
+    linkedList.removeHead();
+    expect(linkedList.head.previous).to.equal(null);
+  });
+
+  it('should designate a new head when new nodes are added to head', function() {
+    linkedList.addToTail(4);
+    expect(linkedList.tail.value).to.equal(4);
+    linkedList.addToHead(5);
+    expect(linkedList.head.value).to.equal(5);
+  });
+
+  it('should remove the tail from the list when removeTail is called', function() {
+    linkedList.addToTail(4);
+    linkedList.addToTail(5);
+    expect(linkedList.tail.value).to.equal(5);
+    linkedList.removeTail();
+    expect(linkedList.head.value).to.equal(4);
+  });
+
+
 });
